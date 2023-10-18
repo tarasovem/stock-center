@@ -10,12 +10,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   </head>
   <body>
-    <header>
-      <a href="#">Stock Center</a>
-      <h1>Items in stock</h1>
-      <div>menu</div>
+    <header class="header">
+      <div class="container header__container">
+        <a class="header__logo" href="#">
+          <img src="./logo.svg" alt="Логотип приложения">
+        </a>
+        <h1 class="header__title">Items in stock</h1>
+        <div class="header__dropdown dropdown">
+          <button class="dropdown__button" type="button" id="burger-menu">Меню</button>
+          <ul class="dropdown__menu">
+            <li class="dropdown__item"><a href="#">Пункт меню</a></li>
+            <li class="dropdown__item"><a href="#">Пункт меню</a></li>
+            <li class="dropdown__item"><a href="#">Пункт меню</a></li>
+          </ul>
+        </div>
+      </div>
     </header>
-<!--    <div id="app"></div>-->
+    <div id="table"></div>
     <script type="module" src="/src/js/main.js"></script>
   </body>
 </html>
