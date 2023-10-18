@@ -81,12 +81,12 @@ body {
   background-color: #f8f9fa;
 }
 
-.table-responsive {
+.table {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.table {
+.table__content {
   width: auto;
   vertical-align: top;
   border-color: #dee2e6;

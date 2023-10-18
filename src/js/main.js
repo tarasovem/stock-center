@@ -12,20 +12,79 @@ function closeModal(evt) {
 	const backdrop = document.querySelector('.modal__backdrop');
 	const modal = document.querySelector('#modal');
 
-	if (evt.target.matches('.modal, .modal__close, .modal__cancel')) {
+	if (evt?.target.matches('.modal, .modal__close, .modal__cancel')) {
+		backdrop.parentNode.removeChild(backdrop);
+		modal.classList.remove('show');
+	} else if (!evt) {
 		backdrop.parentNode.removeChild(backdrop);
 		modal.classList.remove('show');
 	}
 }
 
 function submitForm() {
-	let formData = new FormData('#modal-form');
-	console.log(formData);
+	const form = document.getElementById('modal-form');
+	const formData = new FormData(form);
+	const newData = {};
+
+	for (let [key, value] of formData.entries()) {
+		newData[key] = value;
+	}
+
+	let data = [];
+
+	if (localStorage.getItem('formData')) {
+		const oldData = localStorage.getItem('formData');
+		data = JSON.parse(oldData);
+		data.push(newData);
+	} else {
+		data = [newData];
+	}
+
+	localStorage.setItem('formData', JSON.stringify(data));
+
+	closeModal();
+
+	renderTable();
+}
+
+function renderTable() {
+	const data = JSON.parse(localStorage.getItem('formData'));
+	const tableBody = document.querySelector('.table tbody');
+
+	if (data) {
+		tableBody.innerHTML = '';
+		data.forEach((entry, index) => {
+			const row = document.createElement('tr');
+			const indexCell = document.createElement('td');
+			const titleCell = document.createElement('td');
+			const priceCell = document.createElement('td');
+			const dataAndTimeCell = document.createElement('td');
+
+			const date = new Date(entry.dateAndTime);
+			const day = String(date.getDate() + 1).padStart(2, '0');
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const year = date.getFullYear();
+			const hours = date.getHours();
+			const minutes = date.getMinutes();
+			const formattedDate = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+
+			indexCell.textContent = index + 1;
+			titleCell.textContent = entry.title;
+			priceCell.textContent = entry.price;
+			dataAndTimeCell.textContent = formattedDate;
+
+			row.appendChild(indexCell);
+			row.appendChild(titleCell);
+			row.appendChild(priceCell);
+			row.appendChild(dataAndTimeCell);
+			tableBody.appendChild(row);
+		});
+	}
 }
 
 document.querySelector('#table').innerHTML = `
-  <div class="table-responsive">
-    <table class="table">
+  <div class="table">
+    <table class="table__content">
     	<thead>
     		<tr>
     			<th>#</th>
@@ -36,22 +95,7 @@ document.querySelector('#table').innerHTML = `
 			</thead>	
     	<tbody>
     		<tr>
-    			<td>1</td>
-    			<td>Headphones</td>
-    			<td>10.00</td>
-    			<td>11.01.2021 10:00:00</td>
-				</tr>
-    		<tr>
-    			<td>1</td>
-    			<td>Headphones</td>
-    			<td>10.00</td>
-    			<td>11.01.2021 10:00:00</td>
-				</tr>
-    		<tr>
-    			<td>1</td>
-    			<td>Headphones</td>
-    			<td>10.00</td>
-    			<td>11.01.2021 10:00:00</td>
+    			<td colspan="4" style="text-align: center;">Таблица пуста</td>
 				</tr>
 			</tbody>	
 		</table>
@@ -86,6 +130,8 @@ document.querySelector('#table').innerHTML = `
 		</div>
 	</div>
 `;
+
+document.addEventListener('DOMContentLoaded', renderTable);
 
 document.querySelector('#burger-menu').addEventListener('click', (evt) => {
 	const target = evt.target;
