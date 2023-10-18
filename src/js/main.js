@@ -1,3 +1,4 @@
+import render from './render.js';
 import '../css/style.css';
 
 function showModal() {
@@ -21,7 +22,8 @@ function closeModal(evt) {
 	}
 }
 
-function submitForm() {
+function handleFormSubmit(evt) {
+	evt.preventDefault();
 	const form = document.getElementById('modal-form');
 	const formData = new FormData(form);
 	const newData = {};
@@ -40,50 +42,17 @@ function submitForm() {
 		data = [newData];
 	}
 
+	render(data, 'table');
+
 	localStorage.setItem('formData', JSON.stringify(data));
 
 	closeModal();
 
-	renderTable();
-}
-
-function renderTable() {
-	const data = JSON.parse(localStorage.getItem('formData'));
-	const tableBody = document.querySelector('.table tbody');
-
-	if (data) {
-		tableBody.innerHTML = '';
-		data.forEach((entry, index) => {
-			const row = document.createElement('tr');
-			const indexCell = document.createElement('td');
-			const titleCell = document.createElement('td');
-			const priceCell = document.createElement('td');
-			const dataAndTimeCell = document.createElement('td');
-
-			const date = new Date(entry.dateAndTime);
-			const day = String(date.getDate() + 1).padStart(2, '0');
-			const month = String(date.getMonth() + 1).padStart(2, '0');
-			const year = date.getFullYear();
-			const hours = date.getHours();
-			const minutes = date.getMinutes();
-			const formattedDate = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
-
-			indexCell.textContent = index + 1;
-			titleCell.textContent = entry.title;
-			priceCell.textContent = entry.price;
-			dataAndTimeCell.textContent = formattedDate;
-
-			row.appendChild(indexCell);
-			row.appendChild(titleCell);
-			row.appendChild(priceCell);
-			row.appendChild(dataAndTimeCell);
-			tableBody.appendChild(row);
-		});
-	}
+	form.reset();
 }
 
 document.querySelector('#table').innerHTML = `
-  <div class="table">
+  <div class="table" id="table">
     <table class="table__content">
     	<thead>
     		<tr>
@@ -107,31 +76,34 @@ document.querySelector('#table').innerHTML = `
 				<p class="modal__title">New item</p>
 				<button class="modal__close" type="button" />
 			</div>
-			<div class="modal__body">
-				<form id="modal-form">
+			<form id="modal-form">
+				<div class="modal__body">
 					<div class="modal__form-control">
 						<label for="modal-title">Title</label>
-						<input type="text" id="modal-title" name="title" />
+						<input type="text" id="modal-title" name="title" placeholder="Title" required />
+						<div class="modal__warning">Invalid title</div>
 					</div>
 					<div class="modal__form-control">
 						<label for="modal-price">Price</label>
-						<input type="number" id="modal-price" placeholder="0.00" min="0.00" step="0.01" pattern="\\d+(\\.\\d{2})?" name="price" />
+						<input type="number" id="modal-price" placeholder="0.00" min="0.00" step="0.01" pattern="\\d+(\\.\\d{2})?" name="price" required />
+						<div class="modal__warning">Invalid price</div>
 					</div>
 					<div class="modal__form-control">
 						<label for="modal-date">Date and time</label>
-						<input type="datetime-local" id="modal-date" name="dateAndTime" />
+						<input type="datetime-local" id="modal-date" name="dateAndTime" required />
+						<div class="modal__warning">Invalid date and time</div>
 					</div>
-				</form>
-			</div>
-			<div class="modal__footer">
-				<button class="modal__cancel" type="button">Close</button>
-				<button class="modal__add" type="button" id="form-submit">Add</button>
-			</div>
+				</div>
+				<div class="modal__footer">
+					<button class="modal__cancel" type="button">Close</button>
+					<button class="modal__add" type="submit" id="form-submit">Add</button>
+				</div>
+			</form>
 		</div>
 	</div>
 `;
 
-document.addEventListener('DOMContentLoaded', renderTable);
+document.addEventListener('DOMContentLoaded', render(JSON.parse(localStorage.getItem('formData')), 'table'));
 
 document.querySelector('#burger-menu').addEventListener('click', (evt) => {
 	const target = evt.target;
@@ -143,4 +115,4 @@ document.querySelector('#table-add').addEventListener('click', () => {
 	document.querySelector('#modal').addEventListener('click', closeModal);
 });
 
-document.querySelector('#form-submit').addEventListener('click', submitForm);
+document.querySelector('#modal-form').addEventListener('submit', handleFormSubmit);

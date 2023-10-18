@@ -100,8 +100,12 @@ body {
   vertical-align: bottom;
 }
 
-.table > tbody > tr > td:first-child {
+.table  td:first-child {
   font-weight: 600;
+}
+
+.table td:nth-child(3) {
+  text-align: right;
 }
 
 tbody, td, tfoot, th, thead, tr {
@@ -152,6 +156,9 @@ tbody, td, tfoot, th, thead, tr {
   justify-content: center;
   opacity: 0;
   transition: opacity .15s linear;
+  padding-right: 10px;
+  padding-left: 10px;
+  box-sizing: border-box;
 }
 
 .modal.show {
@@ -293,4 +300,20 @@ tbody, td, tfoot, th, thead, tr {
   border: 1px solid #dee2e6;
   border-radius: 6px;
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+
+.modal__form-control input:invalid {
+  border-color: #ff4739;
+}
+
+.modal__warning {
+  display: none;
+  color: #ff4739;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.modal__form-control input:invalid + .modal__warning {
+  display: block;
 }
