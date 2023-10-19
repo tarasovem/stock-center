@@ -51,6 +51,12 @@ function handleFormSubmit(evt) {
 	form.reset();
 }
 
+function init() {
+	if (localStorage.getItem('formData')) {
+		document.addEventListener('DOMContentLoaded', render(JSON.parse(localStorage.getItem('formData')), 'table'));
+	}
+}
+
 document.querySelector('#table').innerHTML = `
   <div class="table" id="table">
     <table class="table__content">
@@ -103,7 +109,7 @@ document.querySelector('#table').innerHTML = `
 	</div>
 `;
 
-document.addEventListener('DOMContentLoaded', render(JSON.parse(localStorage.getItem('formData')), 'table'));
+init();
 
 document.querySelector('#burger-menu').addEventListener('click', (evt) => {
 	const target = evt.target;
